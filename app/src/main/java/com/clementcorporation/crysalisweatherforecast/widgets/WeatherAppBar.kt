@@ -13,6 +13,7 @@ import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
@@ -20,8 +21,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.clementcorporation.crysalisweatherforecast.model.Favorite
 import com.clementcorporation.crysalisweatherforecast.navigation.WeatherScreens
+import com.clementcorporation.crysalisweatherforecast.screens.favorites.FavoritesViewModel
 
 private val MENU_ITEMS = listOf("About", "Favorites", "Settings")
 private const val MORE_ADA = "more icon"
@@ -33,6 +37,7 @@ fun WeatherAppBar(
     icon: ImageVector? = null,
     isMainScreen: Boolean = true,
     elevation: Dp = 0.dp,
+    favoritesViewModel: FavoritesViewModel = hiltViewModel(),
     navController: NavController,
     onAddActionClicked: () -> Unit = {},
     onButtonClicked: () -> Unit = {}
@@ -86,6 +91,21 @@ fun WeatherAppBar(
                     tint = MaterialTheme.colors.onSecondary,
                     modifier = Modifier.clickable {
                         onButtonClicked.invoke()
+                    }
+                )
+            }
+            if(isMainScreen) {
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "favorite icon",
+                    tint = Color.Red,
+                    modifier =
+                    Modifier.scale(0.9f).clickable {
+                        val cityCountry = title.split(",")
+                        favoritesViewModel.insertFavorite(Favorite(
+                            city = cityCountry.first(),
+                            country = cityCountry[1])
+                        )
                     }
                 )
             }

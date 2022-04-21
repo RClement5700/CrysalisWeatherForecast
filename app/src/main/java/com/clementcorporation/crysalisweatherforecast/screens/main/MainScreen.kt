@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
@@ -51,7 +52,6 @@ fun MainScaffold(weather: Weather, navController: NavController) {
         topBar = {
             WeatherAppBar(
                 title = weather.city.name + ", ${weather.city.country}",
-                icon = Icons.Default.ArrowBack,
                 navController = navController,
                 elevation = 5.dp,
                 onAddActionClicked = {

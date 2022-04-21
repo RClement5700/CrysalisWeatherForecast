@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.clementcorporation.crysalisweatherforecast.screens.about.AboutScreen
 import com.clementcorporation.crysalisweatherforecast.screens.favorites.FavoritesScreen
+import com.clementcorporation.crysalisweatherforecast.screens.favorites.FavoritesViewModel
 import com.clementcorporation.crysalisweatherforecast.screens.main.MainScreen
 import com.clementcorporation.crysalisweatherforecast.screens.splash.WeatherSplashScreen
 import com.clementcorporation.crysalisweatherforecast.screens.main.MainViewModel
@@ -44,16 +45,14 @@ fun WeatherNavigation() {
             }
         }
         composable(WeatherScreens.SearchScreen.name) {
-            //val searchViewModel = hiltViewModel<SearchViewModel>()
-            SearchScreen(navController = navController) //,searchViewModel)
+            SearchScreen(navController = navController)
         }
         composable(WeatherScreens.AboutScreen.name) {
-            //val aboutViewModel = hiltViewModel<AboutViewModel>()
-            AboutScreen(navController = navController) //,aboutViewModel)
+            AboutScreen(navController = navController)
         }
         composable(WeatherScreens.FavoriteScreen.name) {
-            //val favoritesViewModel = hiltViewModel<FavoritesViewModel>()
-            FavoritesScreen(navController = navController) //,favoritesViewModel)
+            val favoritesViewModel = hiltViewModel<FavoritesViewModel>()
+            FavoritesScreen(navController = navController, favoritesViewModel)
         }
         composable(WeatherScreens.SettingsScreen.name) {
             //val settingsViewModel = hiltViewModel<SettingsViewModel>()

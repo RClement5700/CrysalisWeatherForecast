@@ -1,5 +1,7 @@
 package com.clementcorporation.crysalisweatherforecast.widgets
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -42,9 +45,13 @@ fun WeatherAppBar(
     onAddActionClicked: () -> Unit = {},
     onButtonClicked: () -> Unit = {}
     ) {
+    val showIt = remember {
+        mutableStateOf(false)
+    }
     val showDialog = remember {
         mutableStateOf(false)
     }
+    val context = LocalContext.current
     if (showDialog.value) {
         ShowSettingDropDownMenu(showDialog = showDialog, navController = navController)
     }
@@ -95,24 +102,44 @@ fun WeatherAppBar(
                 )
             }
             if(isMainScreen) {
-                Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = "favorite icon",
-                    tint = Color.Red,
-                    modifier =
-                    Modifier.scale(0.9f).clickable {
-                        val cityCountry = title.split(",")
-                        favoritesViewModel.insertFavorite(Favorite(
-                            city = cityCountry.first(),
-                            country = cityCountry[1])
-                        )
-                    }
-                )
+                val listOfFavorites = favoritesViewModel.favList.collectAsState().value.filter{item ->
+                    item.city == title.split(",").first()
+                }
+                if (listOfFavorites.isEmpty()) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "favorite icon",
+                        tint = Color.Red,
+                        modifier = Modifier
+                            .scale(0.9f)
+                            .clickable {
+                                val cityCountry = title.split(",")
+                                favoritesViewModel.insertFavorite(
+                                    Favorite(
+                                        city = cityCountry.first(),
+                                        country = cityCountry[1]
+                                    )
+                                ).run {
+                                    showIt.value = true
+                                }
+                            }
+                    )
+                } else {
+                    showIt.value = false
+                }
+                ShowToast(context = context, showIt, title)
             }
         },
         backgroundColor = Color.Transparent,
         elevation = elevation
     )
+}
+
+@Composable
+fun ShowToast(context: Context, showIt: MutableState<Boolean>, city: String) {
+    if (showIt.value) {
+        Toast.makeText(context, "$city added to Favorites", Toast.LENGTH_SHORT).show()
+    }
 }
 
 @Composable

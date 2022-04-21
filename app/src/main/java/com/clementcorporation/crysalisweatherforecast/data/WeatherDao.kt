@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WeatherDao {
+
+    //Favorites
     @Query(value = "SELECT * FROM favorites_table")
     fun getFavorites(): Flow<List<Favorite>>
 
@@ -23,4 +25,23 @@ interface WeatherDao {
 
     @Delete
     suspend fun deleteFavorite(favorite: Favorite)
+
+    //CrysalisUnits
+    @Query(value = "SELECT * FROM unit_table")
+    fun getUnits(): Flow<List<CrysalisUnit>>
+
+    @Query("SELECT * FROM unit_table WHERE unit = :unit")
+    suspend fun getUnitById(unit: String): CrysalisUnit
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUnit(unit: CrysalisUnit)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateUnit(unit: CrysalisUnit)
+
+    @Query("DELETE FROM unit_table")
+    suspend fun deleteAllUnits()
+
+    @Delete
+    suspend fun deleteUnit(unit: CrysalisUnit)
 }

@@ -7,11 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.produceState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,6 +20,7 @@ import com.clementcorporation.crysalisweatherforecast.data.DataOrException
 import com.clementcorporation.crysalisweatherforecast.model.Weather
 import com.clementcorporation.crysalisweatherforecast.model.WeatherItem
 import com.clementcorporation.crysalisweatherforecast.navigation.WeatherScreens
+import com.clementcorporation.crysalisweatherforecast.screens.settings.SettingsViewModel
 import com.clementcorporation.crysalisweatherforecast.util.DEFAULT_CITY
 import com.clementcorporation.crysalisweatherforecast.util.formatDate
 import com.clementcorporation.crysalisweatherforecast.util.formatDecimals
@@ -32,21 +29,36 @@ import com.clementcorporation.crysalisweatherforecast.widgets.*
 private const val TAG = "MainScreen"
 
 @Composable
-fun MainScreen(navController: NavController, mainViewModel: MainViewModel = hiltViewModel(), cityName: String?) {
+fun MainScreen(navController: NavController,
+               mainViewModel: MainViewModel = hiltViewModel(),
+               settingsViewModel: SettingsViewModel = hiltViewModel(),
+               cityName: String?) {
 
-    val weatherData = produceState<DataOrException<Weather, Boolean, Exception>>(
-        initialValue = DataOrException(loading = true), producer = {
-            value = mainViewModel.getWeatherData(city = cityName?: DEFAULT_CITY)
-        }).value
-    if (weatherData.loading == true) {
-        CircularProgressIndicator()
-    } else if (weatherData.data != null) {
-        MainScaffold(weather = weatherData.data!!, navController = navController)
+    val unitFromDb = settingsViewModel.unitList.collectAsState().value
+    var unit by remember {
+        mutableStateOf("imperial")
+    }
+    var isImperial by remember {
+        mutableStateOf(false)
+    }
+    if (!unitFromDb.isNullOrEmpty()) {
+        unit = unitFromDb.first().unit.split(" ").first().lowercase()
+        isImperial = unit == "imperial"
+        val weatherData = produceState<DataOrException<Weather, Boolean, Exception>>(
+            initialValue = DataOrException(loading = true), producer = {
+                value = mainViewModel.getWeatherData(city = cityName ?: DEFAULT_CITY, units = unit)
+            }
+        ).value
+        if (weatherData.loading == true) {
+            CircularProgressIndicator()
+        } else if (weatherData.data != null) {
+            MainScaffold(weather = weatherData.data!!, navController = navController, isImperial = isImperial)
+        }
     }
 }
 
 @Composable
-fun MainScaffold(weather: Weather, navController: NavController) {
+fun MainScaffold(weather: Weather, navController: NavController, isImperial: Boolean) {
     Scaffold(
         backgroundColor = Color.White,
         topBar = {
@@ -63,12 +75,12 @@ fun MainScaffold(weather: Weather, navController: NavController) {
             )
         }
     ) {
-        MainContent(weather)
+        MainContent(weather, isImperial = isImperial)
     }
 }
 
 @Composable 
-fun MainContent(data: Weather) {
+fun MainContent(data: Weather, isImperial: Boolean) {
     val weatherItem = data.list.first()
     val weatherImgUrl = "https://openweathermap.org/img/wn/${weatherItem.weather.first().icon}.png"
     Column(
@@ -107,7 +119,7 @@ fun MainContent(data: Weather) {
                 )
             }
         }
-        HumidityWindPressureRow(weather = weatherItem)
+        HumidityWindPressureRow(weather = weatherItem, isImperial = isImperial)
         Divider()
         SunsetSunriseRow(weather = weatherItem)
         Row(

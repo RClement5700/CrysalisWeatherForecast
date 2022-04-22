@@ -29,7 +29,7 @@ import com.clementcorporation.crysalisweatherforecast.navigation.WeatherScreens
 import com.clementcorporation.crysalisweatherforecast.util.DEFAULT_CITY
 import kotlinx.coroutines.delay
 
-private const val TAG = "SplashScreen"
+private const val TITLE = "Find the Sun?"
 @Composable
 fun WeatherSplashScreen(navController: NavController) {
     val scale = remember {
@@ -73,7 +73,7 @@ fun WeatherSplashScreen(navController: NavController) {
                 contentDescription = "sunny icon"
             )
             Text(
-                text = "Find the Sun?",
+                text = TITLE,
                 style = MaterialTheme.typography.h5,
                 color = Color.LightGray
             )

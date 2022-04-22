@@ -22,13 +22,14 @@ import com.clementcorporation.crysalisweatherforecast.model.Favorite
 import com.clementcorporation.crysalisweatherforecast.navigation.WeatherScreens
 import com.clementcorporation.crysalisweatherforecast.widgets.WeatherAppBar
 
+private const val TITLE = "Favorites"
 @Composable
 fun FavoritesScreen(navController: NavController, viewModel: FavoritesViewModel = hiltViewModel()) {
     Scaffold(
         backgroundColor = Color.White,
         topBar = {
             WeatherAppBar(
-                title = "Favorites",
+                title = TITLE,
                 isMainScreen = false,
                 navController = navController,
                 icon = Icons.Default.ArrowBack

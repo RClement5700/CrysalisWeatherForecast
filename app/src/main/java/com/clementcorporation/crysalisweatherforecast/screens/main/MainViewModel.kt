@@ -7,7 +7,6 @@ import com.clementcorporation.crysalisweatherforecast.repository.WeatherReposito
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-private const val TAG = "MainViewModel"
 @HiltViewModel
 class MainViewModel @Inject constructor(private val repository: WeatherRepository): ViewModel() {
 

@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val TAG = "Favorites: "
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(private val weatherDbRepository: WeatherDbRepository): 
     ViewModel() {
@@ -22,11 +23,11 @@ class FavoritesViewModel @Inject constructor(private val weatherDbRepository: We
             getFavorites().distinctUntilChanged() //removes repetition
                 .collect { listOfFavorites ->
                     if (listOfFavorites.isNullOrEmpty()) {
-                        Log.d("TAG: ", "No Favorites Listed")
+                        Log.d(TAG, "No Favorites Listed")
                     } else {
                         _favList.value = listOfFavorites
                         favList.value.forEach {
-                            Log.d("FAVORITES: ", it.city)
+                            Log.d(TAG, it.city)
                         }
                     }
                 }

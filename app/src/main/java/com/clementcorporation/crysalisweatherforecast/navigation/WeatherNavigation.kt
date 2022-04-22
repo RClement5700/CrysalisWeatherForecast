@@ -51,12 +51,10 @@ fun WeatherNavigation() {
             AboutScreen(navController = navController)
         }
         composable(WeatherScreens.FavoriteScreen.name) {
-            val favoritesViewModel = hiltViewModel<FavoritesViewModel>()
-            FavoritesScreen(navController = navController, favoritesViewModel)
+            FavoritesScreen(navController = navController)
         }
         composable(WeatherScreens.SettingsScreen.name) {
-            //val settingsViewModel = hiltViewModel<SettingsViewModel>()
-            SettingsScreen(navController = navController) //,settingsViewModel)
+            SettingsScreen(navController = navController)
         }
     }
 }

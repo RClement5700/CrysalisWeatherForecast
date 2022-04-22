@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val TAG = "SettingsViewModel: "
 @HiltViewModel
 class SettingsViewModel @Inject constructor(private val weatherDbRepository: WeatherDbRepository): ViewModel() {
     
@@ -24,11 +25,11 @@ class SettingsViewModel @Inject constructor(private val weatherDbRepository: Wea
         viewModelScope.launch(Dispatchers.IO) {
             weatherDbRepository.getUnits().distinctUntilChanged().collect{ listOfUnits ->
                 if (listOfUnits.isNullOrEmpty()) {
-                    Log.d("TAG: ", "No Settings")
+                    Log.d(TAG, "No Settings")
                 } else {
                     _unitList.value = listOfUnits
                     unitList.value.forEach {
-                        Log.d("Settings: ", it.unit)
+                        Log.d(TAG, it.unit)
                     }
                 }
             }

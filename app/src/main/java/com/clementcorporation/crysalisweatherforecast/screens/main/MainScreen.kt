@@ -27,7 +27,8 @@ import com.clementcorporation.crysalisweatherforecast.util.formatDecimals
 import com.clementcorporation.crysalisweatherforecast.widgets.*
 
 private const val TAG = "MainScreen"
-
+private const val DEFAULT_UNITS = "imperial"
+private const val SUBTITLE = "This Week"
 @Composable
 fun MainScreen(navController: NavController,
                mainViewModel: MainViewModel = hiltViewModel(),
@@ -36,14 +37,14 @@ fun MainScreen(navController: NavController,
 
     val unitFromDb = settingsViewModel.unitList.collectAsState().value
     var unit by remember {
-        mutableStateOf("imperial")
+        mutableStateOf(DEFAULT_UNITS)
     }
     var isImperial by remember {
         mutableStateOf(false)
     }
     if (!unitFromDb.isNullOrEmpty()) {
         unit = unitFromDb.first().unit.split(" ").first().lowercase()
-        isImperial = unit == "imperial"
+        isImperial = unit == DEFAULT_UNITS
         val weatherData = produceState<DataOrException<Weather, Boolean, Exception>>(
             initialValue = DataOrException(loading = true), producer = {
                 value = mainViewModel.getWeatherData(city = cityName ?: DEFAULT_CITY, units = unit)
@@ -130,7 +131,7 @@ fun MainContent(data: Weather, isImperial: Boolean) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "This Week",
+                text = SUBTITLE,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.subtitle1
             )
